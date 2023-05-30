@@ -10,12 +10,10 @@ import org.synechron.utils.Translator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 public class WordCounterImplTest {
     private WordCounter wordCounter;
-    @Mock
-    private Translator translator;
-
     @Mock
     private IWordValidator wordValidator;
 
@@ -23,7 +21,7 @@ public class WordCounterImplTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        wordCounter = new WordCounter(wordValidator, translator);
+        wordCounter = new WordCounter(wordValidator);
     }
 
     @Test
@@ -32,6 +30,9 @@ public class WordCounterImplTest {
             mockedTranslator.when(() -> Translator.translate("flower")).thenReturn("flower");
             mockedTranslator.when(() -> Translator.translate("flor")).thenReturn("flower");
             mockedTranslator.when(() -> Translator.translate("blume")).thenReturn("flower");
+            when(wordValidator.isValidWord("flower")).thenReturn(true);
+            when(wordValidator.isValidWord("flor")).thenReturn(true);
+            when(wordValidator.isValidWord("blume")).thenReturn(true);
             wordCounter.addWords("flower", "flor", "blume");
             assertEquals(3, wordCounter.countWord("flower"));
         }
@@ -60,6 +61,7 @@ public class WordCounterImplTest {
     public void testCountWord_WithExistingWord() throws TranslationException {
         try (MockedStatic<Translator> mockedTranslator = mockStatic(Translator.class)) {
             mockedTranslator.when(() -> Translator.translate("flower")).thenReturn("flower");
+            when(wordValidator.isValidWord("flower")).thenReturn(true);
             wordCounter.addWords("flower", "flower", "flower");
             assertEquals(3, wordCounter.countWord("flower"));
         }

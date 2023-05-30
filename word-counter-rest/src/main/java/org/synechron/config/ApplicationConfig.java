@@ -12,8 +12,7 @@ public class ApplicationConfig {
     @Bean
     public WordCounter wordCounter(){
         IWordValidator wordValidator = new WordValidator();
-        Translator translator = new Translator();
-        return new WordCounter(wordValidator, translator);
+        return new WordCounter(wordValidator);
     }
     @Bean
     public IWordCounter wordCounter(WordCounter wordCounter){
