@@ -1,5 +1,7 @@
 package org.synechron.service;
 
+import org.synechron.exception.TranslationException;
+
 public class WordCounterImpl implements IWordCounter{
 
     private final WordCounter wordCounter;
@@ -13,7 +15,7 @@ public class WordCounterImpl implements IWordCounter{
      * @param words the words to add
      */
     @Override
-    public void addWords(String... words) {
+    public void addWords(String... words) throws TranslationException {
         this.wordCounter.addWords(words);
     }
 
@@ -24,7 +26,7 @@ public class WordCounterImpl implements IWordCounter{
      * @return the count of the word
      */
     @Override
-    public int countWord(String word) {
+    public int countWord(String word) throws TranslationException {
         return this.wordCounter.countWord(word);
     }
 

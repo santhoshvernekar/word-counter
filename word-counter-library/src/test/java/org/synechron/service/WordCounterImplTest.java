@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
+import org.synechron.exception.TranslationException;
 import org.synechron.utils.Translator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,14 +16,18 @@ public class WordCounterImplTest {
     @Mock
     private Translator translator;
 
+    @Mock
+    private IWordValidator wordValidator;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        wordCounter = new WordCounter(translator);
+
+        wordCounter = new WordCounter(wordValidator, translator);
     }
 
     @Test
-    public void testAddWords_WithValidWords() {
+    public void testAddWords_WithValidWords() throws TranslationException {
         try (MockedStatic<Translator> mockedTranslator = mockStatic(Translator.class)) {
             mockedTranslator.when(() -> Translator.translate("flower")).thenReturn("flower");
             mockedTranslator.when(() -> Translator.translate("flor")).thenReturn("flower");
@@ -33,7 +38,7 @@ public class WordCounterImplTest {
     }
 
     @Test
-    public void testAddWords_WithNonAlphabeticCharacters() {
+    public void testAddWords_WithNonAlphabeticCharacters() throws TranslationException {
         wordCounter.addWords("flower1", "123", "!@#$");
         assertEquals(0, wordCounter.countWord("flower1"));
         assertEquals(0, wordCounter.countWord("123"));
@@ -41,18 +46,18 @@ public class WordCounterImplTest {
     }
 
     @Test
-    public void testAddWords_WithEmptyString() {
+    public void testAddWords_WithEmptyString() throws TranslationException {
         wordCounter.addWords("");
         assertEquals(0, wordCounter.countWord(""));
     }
 
     @Test
-    public void testCountWord_WithNonExistingWord() {
+    public void testCountWord_WithNonExistingWord() throws TranslationException {
         assertEquals(0, wordCounter.countWord("flower"));
     }
 
     @Test
-    public void testCountWord_WithExistingWord() {
+    public void testCountWord_WithExistingWord() throws TranslationException {
         try (MockedStatic<Translator> mockedTranslator = mockStatic(Translator.class)) {
             mockedTranslator.when(() -> Translator.translate("flower")).thenReturn("flower");
             wordCounter.addWords("flower", "flower", "flower");
