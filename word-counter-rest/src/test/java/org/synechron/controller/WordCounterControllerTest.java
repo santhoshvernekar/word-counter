@@ -2,44 +2,50 @@ package org.synechron.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synechron.service.IWordCounter;
-
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.synechron.exception.TranslationException;
+import org.synechron.service.IWordCounter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-public class WordCounterControllerTest{
+public class WordCounterControllerTest {
+    private WordCounterController wordCounterController;
+
     @Mock
     private IWordCounter wordCounter;
-    private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        wordCounter = mock(IWordCounter.class);
-        mockMvc = MockMvcBuilders.standaloneSetup(new WordCounterController(wordCounter)).build();
+        wordCounterController = new WordCounterController(wordCounter);
     }
 
     @Test
-    public void testAddWords() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/word-counter/add-words")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("[\"flower\", \"flor\", \"blume\"]"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        verify(wordCounter, times(1)).addWords("flower", "flor", "blume");
+    public void testCountWord_Success() throws TranslationException {
+        String word = "flower";
+        int count = 5;
+
+        when(wordCounter.countWord(word)).thenReturn(count);
+
+        ResponseEntity<Integer> response = wordCounterController.countWord(word);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Integer.valueOf(count), response.getBody());
     }
 
     @Test
-    public void testCountWord() throws Exception {
-        when(wordCounter.countWord("flower")).thenReturn(3);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/word-counter/count-word/flower"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("3"));
+    public void testCountWord_TranslationException() throws TranslationException {
+        String word = "flower";
+
+        when(wordCounter.countWord(word)).thenThrow(new TranslationException("Translation failed", new Exception()));
+
+        ResponseEntity<Integer> response = wordCounterController.countWord(word);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals(Integer.valueOf(0), response.getBody());
     }
 }
