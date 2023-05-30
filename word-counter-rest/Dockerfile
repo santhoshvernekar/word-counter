@@ -5,7 +5,7 @@ FROM adoptopenjdk:11-jre-hotspot
 WORKDIR /app
 
 # Copy the JAR file into the container
-COPY target/word-counter-1.0-0.jar /app/WordCounter.jar
+COPY target/word-counter-microservice-1.0-SNAPSHOT /app/WordCounter.jar
 
 # Expose the port your application will be listening on
 EXPOSE 8080
