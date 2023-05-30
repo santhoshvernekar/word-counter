@@ -13,6 +13,8 @@ public class WordCounterImpl implements IWordCounter{
      * Adds one or more words to the word counter.
      *
      * @param words the words to add
+     * @throws TranslationException if an error occurs during translation
+     *
      */
     @Override
     public void addWords(String... words) throws TranslationException {
@@ -23,6 +25,8 @@ public class WordCounterImpl implements IWordCounter{
      * Returns the count of how many times a given word was added to the word counter.
      *
      * @param word the word to count
+     * @throws TranslationException if an error occurs during translation
+     *
      * @return the count of the word
      */
     @Override

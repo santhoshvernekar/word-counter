@@ -24,7 +24,7 @@ public class WordCounter implements IWordCounter {
                     String translatedWord = this.translator.translate(word);
                     wordCounts.compute(translatedWord, (key, value) -> (value == null) ? 1 : value + 1);
                 } catch (TranslationException e) {
-                    // Handle or propagate the exception as needed
+                    // Handle the exception as needed
                     throw e;
                 }
             }

@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/word-counter")
-public class WordCounterController{
+public class WordCounterController {
 
     private final IWordCounter wordCounter;
 
@@ -32,10 +32,10 @@ public class WordCounterController{
     public ResponseEntity<Integer> countWord(@PathVariable String word) {
         try {
             int count = wordCounter.countWord(word);
-            return ResponseEntity.ok(Integer.valueOf(count));
+            return ResponseEntity.ok(count);
         } catch (TranslationException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Integer.valueOf(0));
+                    .body(0);
         }
     }
 }

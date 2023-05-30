@@ -9,10 +9,6 @@ public class WordValidator implements IWordValidator {
         String trimmedWord = word.trim();
 
         // Check if the trimmed word contains only alphabetic characters
-        if (!trimmedWord.matches("[a-zA-Z]+")) {
-            return false;
-        }
-
-        return true;
+        return trimmedWord.matches("[a-zA-Z]+");
     }
 }
